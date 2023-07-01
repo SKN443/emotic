@@ -69,14 +69,17 @@ def infer(context_norm, body_norm, ind2cat, ind2vad, device, thresholds, models,
     pred_cat, pred_cont = emotic_model(pred_context, pred_body)
     pred_cat = pred_cat.squeeze(0)
     pred_cont = pred_cont.squeeze(0).to("cpu").data.numpy()
-
+    #print(pred_cat)
     bool_cat_pred = torch.gt(pred_cat, thresholds)
-  
+
+  conf = list()
   cat_emotions = list()
   for i in range(len(bool_cat_pred)):
     if bool_cat_pred[i] == True:
       cat_emotions.append(ind2cat[i])
+      conf.append(pred_cat[i])
 
+  conf, cat_emotions = zip(*sorted(zip(conf, cat_emotions)))
   if to_print == True:
     print ('\n Image predictions')
     print ('Continuous Dimnesions Predictions') 
